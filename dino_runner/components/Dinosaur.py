@@ -1,10 +1,12 @@
 import pygame
 from pygame.sprite import Sprite
-from dino_runner.utils.constants import RUNNING, DUCKING
+from dino_runner.utils.constants import RUNNING, DUCKING, JUMPING
 
 class Dinosaur(Sprite):
     POS_X = 80
     POS_Y = 310
+    POS_Y_DUCKING = 340
+    JUM_VEL = 8.5
 
     def __init__(self):
         self.image = RUNNING [0]
@@ -12,12 +14,32 @@ class Dinosaur(Sprite):
         self.dino_rect.x = self.POS_X
         self.dino_rect.y = self.POS_Y
         self.setp_index = 0
+        self.dino_run = True
+        self.dino_duck = False
+        self.dino_jump = False
+        self.jump_vel = self.JUM_VEL
 
     def update(self, user_input):
-        if user_input[pygame.K_DOWN]:
+        if self.dino_jump:
+            self.jump()
+        if self.dino_duck:
             self.duck()
-        else:
+        if self.dino_run:
             self.run()
+
+
+        if user_input[pygame.K_DOWN] and not self.dino_jump:
+            self.dino_run = False
+            self.dino_duck = True
+            self.dino_jump = False
+        elif user_input[pygame.K_UP] and not self.dino_jump:
+            self.dino_run = False
+            self.dino_duck = False
+            self.dino_jump = True
+        elif not self.dino_jump:
+            self.dino_run = True
+            self.dino_duck = False
+            self.dino_jump = False
 
         if self.setp_index >= 10:
             self.setp_index = 0
@@ -41,9 +63,19 @@ class Dinosaur(Sprite):
 
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.POS_X
-        self.dino_rect.y = 350 
+        self.dino_rect = self.POS_Y_DUCKING
 
         self.setp_index += 1
+
+    def jump(self):
+        self.image = JUMPING
+        if self.dino_jump:
+            self.dino_rect.y -= self.jump_vel *4 
+            self.jump_vel -= 0.8
+        if self.jump_vel < -self.JUM_VEL:
+            self.dino_rect.y = self.POS_Y
+            self.dino_jump = False
+            self.jump_vel = self.JUM_VEL
 
 
 
