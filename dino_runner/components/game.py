@@ -82,6 +82,6 @@ class Game:
         font = pygame.font.Font(FONT_ARIAL, 30)
         surface = font.render(str(self.points), True, (0,0,0))
         rect = surface.get_rect()
-        rect.x = 100
+        rect.x = 1000
         rect.y = 10
         self.screen.blit(surface, rect)
