@@ -30,6 +30,7 @@ class Dinosaur(Sprite):
         self.dino_jump = False
         self.jump_vel = self.JUM_VEL
         self.setup_states()
+        
     
     def setup_states(self):
         self.has_power_up = False
@@ -77,7 +78,7 @@ class Dinosaur(Sprite):
         self.image  = self.duck_img[self.type] [self.setp_index // 5]
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.POS_X
-        self.dino_rect = self.POS_Y_DUCKING
+        self.dino_rect.y = self.POS_Y_DUCKING
 
         self.setp_index += 1
 
@@ -90,6 +91,7 @@ class Dinosaur(Sprite):
             self.dino_rect.y = self.POS_Y
             self.dino_jump = False
             self.jump_vel = self.JUM_VEL
+            
 
     def check_invincibility(self):
         if self.shield:
