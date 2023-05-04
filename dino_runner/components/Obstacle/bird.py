@@ -19,7 +19,7 @@ class Bird(Obstacle):
         self.rect.y = aux_y
         self.step_index += 1
 
-        if self.step_index <= 10:
+        if self.step_index >= 10:
             self.step_index = 0
 
         super().update(game_speed, obstacles)
