@@ -30,6 +30,7 @@ class Dinosaur(Sprite):
         self.dino_jump = False
         self.jump_vel = self.JUM_VEL
         self.setup_states()
+    
         
     
     def setup_states(self):

@@ -20,7 +20,7 @@ class PowerUpManager:
                 print("generate power up")
                 self.when_appears =random.randint(self.when_appears +200, 500 + self.when_appears)
                 self.power_ups.append(Shield())
-                self.power_ups.append(Hammer(100, 200))
+                self.power_ups.append(Hammer())
     
     def update(self, points, game_speed, player, obstacles):
         self.generate_power_ups(points)

@@ -6,15 +6,8 @@ from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD
 
 class ObstacleManager:
 
-    def __init__(self, hammer):
+    def __init__(self):
         self.obstacles = []
-        self.timer = pygame.time.get_ticks()
-        self.hammer = hammer
-
-    def check_hammer_collision(self):
-        for obstacle in self.obstacles:
-            if obstacle.rect.colliderect(self.hammer.rect):
-                self.obstacles.remove(obstacle)
     
     def update (self, game_speed, game, user_input):
         if user_input[pygame.K_SPACE]:

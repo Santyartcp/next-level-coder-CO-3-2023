@@ -1,16 +1,11 @@
 import pygame
-
 from dino_runner.utils.constants import (BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_ARIAL)
-
 from dino_runner.components.dinosaur import Dinosaur
-
-from dino_runner.components.Obstacle.obstacle_manager import  ObstacleManager
-
+from dino_runner.components.Obstacle.obstacle_manager import ObstacleManager
 from dino_runner.components.Power_ups.power_up_manager import PowerUpManager
-
 from dino_runner.components.player_hearts.heart_manager import HeartManager
-
 from dino_runner.components.Power_ups.hammer import Hammer
+
 
 class Game:
     def __init__(self):
@@ -28,17 +23,11 @@ class Game:
         self.heart_manager = HeartManager()
         self.points = 0
         self.hammer = Hammer()
-        self.obstacle_manager = ObstacleManager(self.hammer)
-        self.hammer_mode = False
-        self.hammer_key_pressed = False
+        self.obstacle_manager = ObstacleManager()
         self.background_color = (255, 255, 255)
         self.game_over_font = pygame.font.Font(FONT_ARIAL, 60)
         self.game_over_surface = self.game_over_font.render('Game Over', True, (255, 0, 255))
         self.game_over_rect = self.game_over_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-
-        
-        
-
 
     def increase_score(self):
         self.points += 1
@@ -48,7 +37,10 @@ class Game:
         if self.points >= 200 and self.points < 500:
             self.background_color = (255, 255, 0)
         elif self.points >= 500:
-            self.background_color = (0, 0, 0)  
+            self.background_color = (255, 0, 255)
+
+        if self.points >= 1000:
+            self.heart_manager.add_life(2)
 
         self.player.check_invincibility()
 
@@ -60,49 +52,22 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.playing = False
 
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    self.hammer_key_pressed = True
-
-                elif event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-                    self.hammer_key_pressed = False
-
-            if self.hammer_key_pressed:
-                self.hammer_mode = True
-                self.obstacle_manager.check_hammer_collision()
-
-            user_input = pygame.key.get_pressed()
-            self.update(user_input)
-            self.draw()
-
-            if not self.game_over:
+            if self.heart_manager.heart_count != 0:
                 user_input = pygame.key.get_pressed()
                 self.update(user_input)
                 self.draw()
-                self.check_game_over()
 
         pygame.quit()
 
-    def events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.playing = False
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                self.hammer_key_pressed = True
-            elif event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-                self.hammer_key_pressed = False
-
-    def update(self, user_input): 
+    def update(self, user_input):
         self.player.update(user_input)
         self.obstacle_manager.update(self.game_speed, self, user_input)
         self.power_up_manager.update(self.points, self.game_speed, self.player,
-                                    self.obstacle_manager.obstacles)
+                                     self.obstacle_manager.obstacles)
         self.increase_score()
 
         if self.heart_manager.heart_count == 0:
             self.game_over()
-
-        
-    
 
     def draw(self):
         self.clock.tick(FPS)
@@ -114,17 +79,13 @@ class Game:
         self.draw_score()
         self.heart_manager.draw(self.screen)
         pygame.display.update()
-        pygame.display.flip()
 
     def draw_background(self):
         image_width = BG.get_width()
         self.screen.blit(BG, (self.x_pos_bg, self.y_pos_bg))
         self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
         if self.x_pos_bg <= -image_width:
-            self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
-            self.x_pos_bg = 0
-        self.x_pos_bg -= self.game_speed
-
+            self.screen.blit()
     def draw_score(self):
         font = pygame.font.Font(FONT_ARIAL, 30)
         surface = font.render(str(self.points), True, (0,0,0))
